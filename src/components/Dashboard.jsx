@@ -1,7 +1,7 @@
 import React from 'react';
 import { daysUntil, urgencyInfo, formatDays } from '../data/foods';
 
-export default function Dashboard({ items, onNav }) {
+export default function Dashboard({ items, onNav, username, onLogout }) {
   const total    = items.length;
   const expired  = items.filter(i => daysUntil(i.expiry) < 0).length;
   const critical = items.filter(i => { const d = daysUntil(i.expiry); return d >= 0 && d <= 5; }).length;
@@ -32,9 +32,18 @@ export default function Dashboard({ items, onNav }) {
         background: 'var(--surface)', borderBottom: '1px solid var(--border)',
         padding: '18px 20px 14px',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <span style={{ fontSize: 22 }}>🥦</span>
-          <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>FreshTrack</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 22 }}>🥦</span>
+            <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>FreshTrack</span>
+          </div>
+          <button onClick={onLogout} style={{
+            background: 'none', border: '1px solid var(--border)', borderRadius: 20,
+            padding: '5px 12px', fontSize: 11, color: 'var(--muted)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 5,
+          }}>
+            👤 {username} · Logout
+          </button>
         </div>
         <p style={{ fontSize: 12, color: 'var(--muted)' }}>Track what's in your kitchen. Waste nothing.</p>
       </div>
