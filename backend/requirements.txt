@@ -1,4 +1,6 @@
+# cache-bust-1
 fastapi
 uvicorn[standard]
 pydantic
 sqlalchemy
+psycopg2-binary>=2.9.9
