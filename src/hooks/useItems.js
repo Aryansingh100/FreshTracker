@@ -1,12 +1,45 @@
-import { useState } from 'react';
-import { SAMPLE_ITEMS } from '../data/foods';
+// Making some changes
+import { useState, useEffect, useCallback } from 'react';
 
-export function useItems() {
-  const [items, setItems] = useState(SAMPLE_ITEMS);
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
-  const addItem    = (item) => setItems(prev => [...prev, { ...item, id: Date.now() }]);
-  const deleteItem = (id)   => setItems(prev => prev.filter(i => i.id !== id));
-  const editItem   = (id, updates) => setItems(prev => prev.map(i => i.id === id ? { ...i, ...updates } : i));
+export function useItems(username) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (!username) return;
+    setLoading(true);
+    fetch(`${API_URL}/users/${username}/items`)
+      .then(res => res.json())
+      .then(data => setItems(Array.isArray(data) ? data : []))
+      .catch(() => setItems([]))
+      .finally(() => setLoading(false));
+  }, [username]);
 
-  return { items, addItem, deleteItem, editItem };
+  const addItem = useCallback(async (item) => {
+    const res = await fetch(`${API_URL}/users/${username}/items`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item),
+    });
+    const saved = await res.json();
+    setItems(prev => [...prev, saved]);
+  }, [username]);
+
+  const deleteItem = useCallback(async (id) => {
+    await fetch(`${API_URL}/users/${username}/items/${id}`, { method: 'DELETE' });
+    setItems(prev => prev.filter(i => i.id !== id));
+  }, [username]);
+
+  const editItem = useCallback(async (id, updates) => {
+    const res = await fetch(`${API_URL}/users/${username}/items/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    const saved = await res.json();
+    setItems(prev => prev.map(i => i.id === id ? saved : i));
+  }, [username]);
+
+  return { items, loading, addItem, deleteItem, editItem };
 }
