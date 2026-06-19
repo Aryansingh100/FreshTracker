@@ -2,7 +2,9 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
+/* ── Dark theme (default) ── */
+:root,
+[data-theme="dark"] {
   --bg: #0d0d0d;
   --surface: #141414;
   --surface2: #1c1c1c;
@@ -37,12 +39,45 @@
   --radius-xs: 6px;
 }
 
+/* ── Light theme ── */
+[data-theme="light"] {
+  --bg: #f5f5f4;
+  --surface: #ffffff;
+  --surface2: #f1f1ef;
+  --surface3: #e8e8e6;
+  --border: #e0e0de;
+  --border2: #cfcfcd;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --dim: #9a9a9a;
+
+  --green: #198754;
+  --green-bg: rgba(25,135,84,0.1);
+  --green-border: rgba(25,135,84,0.3);
+
+  --red: #d8413f;
+  --red-bg: rgba(216,65,63,0.08);
+  --red-border: rgba(216,65,63,0.3);
+
+  --amber: #c9821a;
+  --amber-bg: rgba(201,130,26,0.1);
+  --amber-border: rgba(201,130,26,0.3);
+
+  --blue: #2f72c4;
+  --blue-bg: rgba(47,114,196,0.1);
+  --blue-border: rgba(47,114,196,0.3);
+
+  --purple: #7c6fd4;
+  --purple-bg: rgba(124,111,212,0.1);
+}
+
 html, body, #root {
   height: 100%;
   background: var(--bg);
   font-family: 'Syne', sans-serif;
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  transition: background 0.2s, color 0.2s;
 }
 
 button { font-family: 'Syne', sans-serif; cursor: pointer; }
@@ -60,7 +95,7 @@ input, select {
   transition: border-color 0.2s;
 }
 input:focus, select:focus { border-color: var(--green); }
-select option { background: var(--surface2); }
+select option { background: var(--surface2); color: var(--text); }
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { daysUntil, urgencyInfo, formatDays } from '../data/foods';
 
-export default function Dashboard({ items, onNav, username, onLogout }) {
+export default function Dashboard({ items, onNav, username, onLogout, theme, onToggleTheme }) {
   const total    = items.length;
   const expired  = items.filter(i => daysUntil(i.expiry) < 0).length;
   const critical = items.filter(i => { const d = daysUntil(i.expiry); return d >= 0 && d <= 5; }).length;
@@ -25,6 +25,8 @@ export default function Dashboard({ items, onNav, username, onLogout }) {
     { label: 'Manage pantry',  sub: 'Edit or remove items',     emoji: '🧹', page: 'expiry',  accent: 'var(--purple-bg)'    },
   ];
 
+  const isDark = theme === 'dark';
+
   return (
     <div className="fade-up">
       {/* Hero */}
@@ -45,6 +47,22 @@ export default function Dashboard({ items, onNav, username, onLogout }) {
             👤 {username} · Logout
           </button>
         </div>
+
+        {/* ── Theme toggle — sits right below the account name row ── */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+          <button onClick={onToggleTheme} style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'var(--surface2)', border: '1px solid var(--border)',
+            borderRadius: 20, padding: '5px 12px', fontSize: 11,
+            color: 'var(--muted)', cursor: 'pointer', transition: 'all .15s',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--green)'; e.currentTarget.style.color = 'var(--green)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--muted)'; }}
+          >
+            {isDark ? '🌙' : '☀️'} {isDark ? 'Dark mode' : 'Light mode'}
+          </button>
+        </div>
+
         <p style={{ fontSize: 12, color: 'var(--muted)' }}>Track what's in your kitchen. Waste nothing.</p>
       </div>
 

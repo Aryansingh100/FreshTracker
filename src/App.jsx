@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useItems } from './hooks/useItems';
+import { useTheme } from './hooks/useTheme';
 import { BottomNav, Spinner } from './components/UI';
 import Login          from './components/Login';
 import Dashboard       from './components/Dashboard';
@@ -12,6 +13,8 @@ export default function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [page, setPage]               = useState('dashboard');
   const [preselected, setPreselected] = useState(null);
+
+  const { theme, toggleTheme } = useTheme();
 
   // On first load, check if a username is already saved (auto-login)
   useEffect(() => {
@@ -64,7 +67,14 @@ export default function App() {
       ) : (
         <>
           {page === 'dashboard' && (
-            <Dashboard items={items} onNav={navigate} username={username} onLogout={handleLogout} />
+            <Dashboard
+              items={items}
+              onNav={navigate}
+              username={username}
+              onLogout={handleLogout}
+              theme={theme}
+              onToggleTheme={toggleTheme}
+            />
           )}
           {page === 'add' && (
             <AddItem onAdd={addItem} onBack={() => navigate('dashboard')} />
