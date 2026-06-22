@@ -5,6 +5,10 @@ import { TopBar, Spinner, ErrorBanner } from './UI';
 const ACCENT_COLORS = ['var(--green)', 'var(--blue)', 'var(--amber)'];
 const OPENROUTER_KEY = process.env.REACT_APP_OPENROUTER_KEY;
 
+function googleSearchUrl(title) {
+  return `https://www.google.com/search?q=${encodeURIComponent(title + ' recipe')}`;
+}
+
 export default function RecipeIdeas({ items, preselected, onBack }) {
   const [activeId, setActiveId] = useState(preselected?.id ?? null);
   const [recipes, setRecipes]   = useState([]);
@@ -52,10 +56,8 @@ Return ONLY a valid JSON array with no markdown fences or extra text:
 
       const data = await res.json();
 
-      // Log the full response so we can see exactly what came back
       console.log('OpenRouter response:', JSON.stringify(data, null, 2));
 
-      // Check for API-level errors
       if (data.error) {
         setError(`API error: ${data.error.message || JSON.stringify(data.error)}`);
         return;
@@ -67,10 +69,8 @@ Return ONLY a valid JSON array with no markdown fences or extra text:
         return;
       }
 
-      // Strip markdown fences and find the JSON array
       let clean = text.replace(/```json|```/g, '').trim();
 
-      // Sometimes the model adds text before/after the JSON — extract just the array
       const arrayStart = clean.indexOf('[');
       const arrayEnd   = clean.lastIndexOf(']');
       if (arrayStart !== -1 && arrayEnd !== -1) {
@@ -152,19 +152,39 @@ Return ONLY a valid JSON array with no markdown fences or extra text:
             }}>
               Recipes using {activeItem?.emoji} {activeItem?.name}
             </p>
+            <p style={{ fontSize: 11, color: 'var(--dim)', marginBottom: 14, marginTop: -8 }}>
+              Tap a recipe to search it on Google
+            </p>
             {recipes.map((r, i) => (
-              <div key={i} className="fade-up" style={{
-                background: 'var(--surface2)', border: '1px solid var(--border)',
-                borderRadius: 'var(--radius)', padding: 18, marginBottom: 14,
-                position: 'relative', overflow: 'hidden',
-              }}>
+              <div
+                key={i}
+                className="fade-up"
+                onClick={() => window.open(googleSearchUrl(r.title), '_blank', 'noopener,noreferrer')}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    window.open(googleSearchUrl(r.title), '_blank', 'noopener,noreferrer');
+                  }
+                }}
+                style={{
+                  background: 'var(--surface2)', border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius)', padding: 18, marginBottom: 14,
+                  position: 'relative', overflow: 'hidden',
+                  cursor: 'pointer', transition: 'border-color .15s, transform .1s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = ACCENT_COLORS[i]; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = ''; }}
+              >
                 <div style={{
                   position: 'absolute', top: 0, left: 0, bottom: 0,
                   width: 3, background: ACCENT_COLORS[i],
                 }} />
                 <div style={{ paddingLeft: 14 }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8, gap: 10 }}>
-                    <div style={{ fontSize: 15, fontWeight: 800, flex: 1 }}>{r.title}</div>
+                    <div style={{ fontSize: 15, fontWeight: 800, flex: 1 }}>
+                      {r.title} <span style={{ fontSize: 12, opacity: 0.5 }}>🔍</span>
+                    </div>
                     <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                       {[r.time, r.difficulty].map(b => (
                         <span key={b} style={{
