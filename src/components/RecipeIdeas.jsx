@@ -55,7 +55,6 @@ Return ONLY a valid JSON array with no markdown fences or extra text:
       });
 
       const data = await res.json();
-
       console.log('OpenRouter response:', JSON.stringify(data, null, 2));
 
       if (data.error) {
@@ -70,7 +69,6 @@ Return ONLY a valid JSON array with no markdown fences or extra text:
       }
 
       let clean = text.replace(/```json|```/g, '').trim();
-
       const arrayStart = clean.indexOf('[');
       const arrayEnd   = clean.lastIndexOf(']');
       if (arrayStart !== -1 && arrayEnd !== -1) {
@@ -156,18 +154,16 @@ Return ONLY a valid JSON array with no markdown fences or extra text:
               Tap a recipe to search it on Google
             </p>
             {recipes.map((r, i) => (
-              <div
+              <a
                 key={i}
+                href={googleSearchUrl(r.title)}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="fade-up"
-                onClick={() => window.open(googleSearchUrl(r.title), '_blank', 'noopener,noreferrer')}
-                role="button"
-                tabIndex={0}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    window.open(googleSearchUrl(r.title), '_blank', 'noopener,noreferrer');
-                  }
-                }}
                 style={{
+                  display: 'block',
+                  textDecoration: 'none',
+                  color: 'inherit',
                   background: 'var(--surface2)', border: '1px solid var(--border)',
                   borderRadius: 'var(--radius)', padding: 18, marginBottom: 14,
                   position: 'relative', overflow: 'hidden',
@@ -220,7 +216,7 @@ Return ONLY a valid JSON array with no markdown fences or extra text:
                     </div>
                   )}
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         )}
